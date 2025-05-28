@@ -9,6 +9,7 @@ const LiveChat = () => {
   const dispatch = useDispatch();
   const chatMessages = useSelector((store) => store.chat.messages);
   const [LiveMessage, setLiveMessage] = useState("");
+
   useEffect(() => {
     const val = setInterval(() => {
       dispatch(
@@ -18,7 +19,8 @@ const LiveChat = () => {
     return () => {
       clearInterval(val);
     };
-  }, []);
+  }, [dispatch]);
+
   return (
     <div className="w-[100%] block">
       <div className="mx-0 mt-2 md:mx-2 md:mt-0 p-1 my-1 border border-gray-200 rounded-lg w-full h-[500px] overflow-y-scroll flex flex-col-reverse">
@@ -27,7 +29,7 @@ const LiveChat = () => {
         ))}
       </div>
       <form
-        className="mx-0 mt-2 md:mx-2 md:mt-0 py-0 my-1 w-full border h-9 border-gray-200 rounded-lg flex justify-between "
+        className="mx-0 mt-2 md:mx-2 md:mt-0 py-0 my-1 w-full border h-9 border-gray-200 rounded-lg flex justify-between"
         onSubmit={(e) => {
           e.preventDefault();
           dispatch(
