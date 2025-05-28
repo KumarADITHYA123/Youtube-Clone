@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoIosSearch } from "react-icons/io";
 import { MdMic } from "react-icons/md";
@@ -14,7 +14,6 @@ import { updateVideos } from "../utils/videoSlice";
 import { YOUTUBE_SEARCH_RESULTS_API } from "../utils/constants";
 import { setSearchKey } from "../utils/searchKeySlice";
 import { useNavigate } from "react-router-dom";
-import ToggleButton from './ToggleButton';
 
 const Header = () => {
   const [suggestions, setSuggestions] = useState([]);
@@ -25,7 +24,7 @@ const Header = () => {
   const apiKey = process.env.REACT_APP_YOUR_API_KEY;
   const navigate = useNavigate();
 
-  const getSuggestions = async () => {
+  const getSuggestions = useCallback(async () => {
     try {
       const data = await fetch(YOUTUBE_SEARCH_API + searchKey);
       const json = await data.json();
@@ -36,7 +35,7 @@ const Header = () => {
     } catch (err) {
       console.log("Error in get suggestions");
     }
-  };
+  }, [searchKey, dispatch]);
 
   useEffect(() => {
     const timer = setTimeout(() => {

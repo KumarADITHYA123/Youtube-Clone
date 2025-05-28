@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { closeMenu } from "../utils/appslice";
 import { setSuggestions } from "../utils/suggestSlice";
@@ -23,16 +23,16 @@ const Watchpage = () => {
   const dispatch = useDispatch();
   const [suggestData, setSuggestData] = useState([]);
 
-  const fetchSuggestions = async (channel) => {
+  const fetchSuggestions = useCallback(async (channel) => {
     const data = await fetch(
       "https://www.googleapis.com/youtube/v3/search?part=snippet&q=" + channel +
       "&type=video&key=" + apiKey
     );
     const json = await data.json();
     setSuggestData(json.items);
-  };
+  }, [apiKey]);
 
-  const getData = async () => {
+  const getData = useCallback(async () => {
     const url = YOUTUBE_VIDEO_API + videoid + "&key=" + apiKey;
     const data = await fetch(url);
     const json = await data.json();
@@ -40,7 +40,7 @@ const Watchpage = () => {
     if (json?.items[0]?.snippet?.liveBroadcastContent === "live") {
       setLive(true);
     }
-  };
+  }, [videoid, apiKey]);
 
   const handleSubscribe = () => {
     setSubscribed(!isSubscribed);
@@ -49,13 +49,13 @@ const Watchpage = () => {
   useEffect(() => {
     dispatch(closeMenu());
     getData();
-  }, [videoid, dispatch]);
+  }, [dispatch, getData]);
 
   useEffect(() => {
     if (videodata?.items?.[0]?.snippet?.channelTitle) {
       fetchSuggestions(videodata.items[0].snippet.channelTitle);
     }
-  }, [videodata, apiKey]);
+  }, [videodata, fetchSuggestions]);
 
   useEffect(() => {
     dispatch(setSuggestions(suggestData));
